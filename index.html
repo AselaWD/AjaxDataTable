@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
+	<title>Editor example - In table form controls</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css">
+	<link rel="stylesheet" type="text/css" href="css/custom.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.bootstrap4.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.bootstrap4.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/editor.dataTables.css">
+    
+	<style type="text/css" class="init">
+	
+	</style>
+
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="js/dataTables.editor.min.js"></script>
+	<script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="resources/demo.js"></script>
+    <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
+	<script type="text/javascript" language="javascript" class="init">
+	
+var editor; // use a global for the submit and return data rendering in the examples
+ 
+$(document).ready(function() {
+    editor = new $.fn.dataTable.Editor( {
+        ajax: "data.txt",
+        table: "#example",
+        fields: [ {
+                label: "Profile pic:",
+                name: "picture"
+            }, {
+                label: "Name:",
+                name: "name"
+            }, {
+                label: "Social Media Accounts:",
+                name: "social[].name"
+            }, {
+                label: "Favorite:",
+                name: "favorite"
+            }, {
+                label: "Activity:",
+                name: "activity[].name"
+            }
+        ],
+        formOptions: {
+            inline: {
+                onBlur: 'submit'
+            }
+        }
+    } );
+ 
+    // Edit record
+    $('#example').on('click', 'a.editor_edit', function (e) {
+            e.preventDefault();
+    
+            editor.edit( $(this).closest('tr'), {
+                title: 'Edit record',
+                buttons: 'Update'
+            } );
+        } );
+ 
+    // Delete a record
+    $('#example').on('click', 'a.editor_remove', function (e) {
+        e.preventDefault();
+ 
+        editor.remove( $(this).closest('tr'), {
+            title: 'Delete record',
+            message: 'Are you sure you wish to remove this record?',
+            buttons: 'Delete'
+        } );
+    } );
+
+    var table = $('#example').DataTable( {
+        dom: "Bfrtip",
+        ajax: "data.txt",
+        
+        columns: [
+            {
+                data: null,
+                defaultContent: '',
+                className: 'select-checkbox',
+                orderable: true
+            },
+            { data: "picture", render: function (dataField) { return '<img src="resources/avatar/' + dataField + '" class="avatar-img" />'; }},
+            { data: "name" },
+            { data: "social[].name" },
+            { data: "favorite" },
+            { data: "friends", render: function (dataField) { return '<img src="resources/avatar/' + dataField + '" class="friends-img" />'; }},
+            { data: "activity[].name", render: function (data) { 
+                return "<script>$('document').ready(function () {var options = {animationEnabled: true,	data: [{type: \"spline\",	markerSize:10,		dataPoints: [ { x: 50, y: 2289000 }, { x: 10, y: 2830000 }, { x: 10, y: 1009000 },{ x: 1, y: 1840000 },]}]};$(\"#chartContainer"+data[0]+"\").CanvasJSChart(options);}); <\/script><div id=\"chartContainer"+data[0]+"\" style=\"height: 50px; max-width: 920px; margin: 0px auto;\"></div>"; 
+                } 
+            },
+            { data: "country"},
+            // { data: ["score.treat", "score.influence"] },
+            {
+                data: null,
+                className: "center",
+                defaultContent: '<a href="" class="btn btn-primary editor_edit"><i class="fa fa-edit"></i></a> <a href="" class="btn btn-danger editor_remove"><i class="fa fa-trash"></i></a>'
+            }
+        ],
+        order: [ 1, 'asc' ],
+        keys: {
+            columns: ':not(:first-child)',
+            keys: [ 9 ],
+            editor: editor,
+            editOnFocus: true
+        },
+        select: {
+            style:    'os',
+            selector: 'td:first-child'
+        },
+        buttons: [
+            { extend: "create", editor: editor },
+            { extend: "edit",   editor: editor },
+            { extend: "remove", editor: editor }
+        ]
+    } );
+} );
+
+    </script>
+
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+</head>
+<body class="dt-example php">
+	<div class="container-fluid">
+		<section>
+			<h2>Evicio Practical Exam Q:01</span></h2>
+			
+			<table id="example" class="display table  table-sm table-dark" cellspacing="0" width="100%">
+				<thead>
+					<tr class="text-uppercase text-center">
+                        <th></th>
+                        <th>Profile</th>
+						<th>Name</th>
+						<th>Social Media Accounts</th>
+						<th>Favorite</th>
+						<th>Close Friends</th>
+						<th>Activities</th>
+						<th>Country</th>
+						<th>Score</th>
+						<th></th>
+					</tr>
+				</thead>
+			</table>
+
+		</section>
+	</div>
+    
+</body>
+</html>
